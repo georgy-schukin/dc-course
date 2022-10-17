@@ -12,7 +12,6 @@ public class WebClient {
         String host = args.length > 1 ? args[1] : "localhost";
         int port = args.length > 2 ? Integer.parseInt(args[0]) : 8080;
 
-
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -25,6 +24,7 @@ public class WebClient {
 
             System.out.println("Got response:");
             System.out.println(response.body());
+
             /*Socket socket = new Socket(host, port);
             Request request = new Request("/index.html");
             request.send(socket);
