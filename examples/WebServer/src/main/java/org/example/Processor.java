@@ -34,6 +34,7 @@ public class Processor {
         output.println("<body><p>Hello, world!</p></body>");
         output.println("</html>");
         output.flush();
+
         socket.close();
     }
 }

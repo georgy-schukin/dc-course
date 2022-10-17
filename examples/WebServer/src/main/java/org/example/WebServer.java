@@ -22,24 +22,23 @@ public class WebServer {
             while (true) {
                 // Make the server socket wait for the next client request
                 Socket socket = serverSocket.accept();
+
                 System.out.println("Got connection!");
 
                 // To read input from the client
                 BufferedReader input = new BufferedReader(
                         new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
 
-                // Get request
-                HttpRequest request = HttpRequest.parse(input);
+                try {
+                    // Get request
+                    HttpRequest request = HttpRequest.parse(input);
 
-                // Empty request - no response
-                if (request == null) {
-                    socket.close();
-                    continue;
+                    // Process request
+                    Processor proc = new Processor(socket, request);
+                    proc.process();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
                 }
-
-                // Process request
-                Processor proc = new Processor(socket, request);
-                proc.process();
             }
         }
         catch (IOException ex) {
