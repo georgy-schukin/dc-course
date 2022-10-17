@@ -1,11 +1,11 @@
 package org.example;
 
-import java.io.IOException;
-import java.net.Socket;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class WebClient {
     public static void main(String[] args) {
@@ -13,29 +13,27 @@ public class WebClient {
         int port = args.length > 2 ? Integer.parseInt(args[0]) : 8080;
 
         try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://" + host + ":" + port + "/index.html"))
-                    .header("User-Agent", "WebClient")
-                    .build();
-
-            HttpResponse<String> response =
-                    client.send(request, HttpResponse.BodyHandlers.ofString());
-
+            CompletableFuture<String> future = getURI(makeUri(host, port, "index.html"));
             System.out.println("Got response:");
-            System.out.println(response.body());
-
-            /*Socket socket = new Socket(host, port);
-            Request request = new Request("/index.html");
-            request.send(socket);
-            Response response = new Response();
-            response.receive(socket);
-            System.out.println("Got response:");
-            System.out.println(response);
-            socket.close();*/
+            System.out.println(future.get());
         }
-        catch (IOException | InterruptedException ex) {
+        catch (InterruptedException | ExecutionException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public static String makeUri(String host, int port, String path) {
+        return "http://" + host + ":" + port + "/" + path;
+    }
+
+    public static CompletableFuture<String> getURI(String uri) {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(uri))
+                .header("User-Agent", "WebClient")
+                .build();
+
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(HttpResponse::body);
     }
 }
