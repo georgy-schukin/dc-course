@@ -17,10 +17,12 @@ public class Processor {
     }
 
     public void process() throws IOException {
+        // Print request that we received.
         System.out.println("Got request:");
         System.out.println(request.toString());
         System.out.flush();
 
+        // To send response back to the client.
         PrintWriter output = new PrintWriter(socket.getOutputStream());
 
         // We are returning a simple web page now.

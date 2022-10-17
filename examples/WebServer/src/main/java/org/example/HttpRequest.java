@@ -46,6 +46,9 @@ public class HttpRequest {
     }
 
     public static HttpRequest parse(BufferedReader reader) throws IOException {
+        if (!reader.ready()) {
+            return null;
+        }
         String requestLine = reader.readLine();
         if (requestLine == null || requestLine.isEmpty()) {
             throw new IOException("Invalid Request-Line: " + requestLine);

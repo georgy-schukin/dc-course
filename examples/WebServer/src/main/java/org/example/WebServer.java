@@ -31,6 +31,12 @@ public class WebServer {
                 // Get request
                 HttpRequest request = HttpRequest.parse(input);
 
+                // Empty request - no response
+                if (request == null) {
+                    socket.close();
+                    continue;
+                }
+
                 // Process request
                 Processor proc = new Processor(socket, request);
                 proc.process();
